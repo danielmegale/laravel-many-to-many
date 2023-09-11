@@ -14,6 +14,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Title</th>
                 <th scope="col">Categoria</th>
+                <th scope="col">Tecnologia</th>
                 <th scope="col">URL</th>
                 <th scope="col">Description</th>
                 <th scope="col">Creato il</th>
@@ -33,6 +34,13 @@
                         @else
                             -
                         @endif
+                    </td>
+                    <td>
+                        @forelse ($project->technologies as $technology)
+                            <span class="badge text-bg-{{ $technology->color }} ">{{ $technology->label }}</span>
+                        @empty
+                            -
+                        @endforelse
                     </td>
                     <td><a href="{{ $project->url }}">{{ $project->url }}</a></td>
                     <td>{{ $project->description }}</td>

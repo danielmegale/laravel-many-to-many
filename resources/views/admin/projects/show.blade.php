@@ -15,6 +15,13 @@
             <strong>Creato il:</strong>{{ $project->created_at }}
             <strong>Ultima modifica:</strong>{{ $project->updated_at }}
             <strong>Categoria:</strong>{{ $project->category?->label }}
+
+            <strong>Tecnologia:</strong>
+            @forelse($project->technologies as $technology)
+                {{ $technology->label }}
+            @empty
+                -
+            @endforelse
         </div>
     </div>
     <hr>
