@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Technology;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
@@ -28,7 +29,7 @@ class ProjectController extends Controller
         $project = new Project();
         $technologies = Technology::select('id', 'label')->get();
         $categories = Category::all();
-        return view('admin.projects.create', compact('project', 'categories'));
+        return view('admin.projects.create', compact('project', 'categories', 'technologies'));
     }
 
     /**
@@ -61,6 +62,8 @@ class ProjectController extends Controller
         $project->description = $data['description'];
         $project->save();
 
+        if (Arr::exists($data, 'technologies')) $project->tags()->attach($data['technologies']);
+
         return to_route('admin.projects.show', $project)->with('alert-type', 'success')->with('alert-message', 'Progetto Creato con Successo');
     }
 
@@ -77,8 +80,10 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        $technologies = Technology::all();
+        $project_technologies_ids = $project->technologies->pluck('id')->toArray();
         $categories = Category::all();
-        return view('admin.projects.edit', compact('project', 'categories'));
+        return view('admin.projects.edit', compact('project', 'categories', 'technologies'));
     }
 
     /**
@@ -107,6 +112,10 @@ class ProjectController extends Controller
             $data['image'] = $img_url;
         }
         $project->update($data);
+
+        if (!Arr::exists($data, 'technologies') && count($project->technologies)) $project->technologies()->detach();
+        elseif (Arr::exists($data, 'technologies')) $project->technologies()->sync($data['technologies']);
+
         return to_route('admin.projects.show', compact('project'))->with('alert-type', 'success')->with('alert-message', 'Progetto Modificato con Successo');
     }
 

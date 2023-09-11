@@ -56,6 +56,21 @@
         <img src="{{ $project->image ? asset('storage/' . $project->image) : '' }}" alt="Preview" class="img-fluid"
             id="image-preview">
     </div>
+    <div class="col-10">
+        @foreach ($technologies as $technology)
+            <div class="form-check form-check-inline my-3">
+                <input type="form-check-input" type="checkbox" @if (in_array($technology->id, old('technologies', $project_technology_ids ?? []))) checked @endif
+                    id="technologies{{ $technology->id }}" value="{{ $technology->id }}" name="technologies[]">
+                <label class="form-check-label"
+                    for="technology-{{ $technology->id }}">{{ $technology->label }}</label>
+                @error('technologies')
+                    <div class="text-danger">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        @endforeach
+    </div>
     <div class="col-12">
         <div class="mb-3">
             <label for="url" class="form-label">URL Progetto</label>
